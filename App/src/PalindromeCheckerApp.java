@@ -1,40 +1,56 @@
 import java.util.Scanner;
-import java.util.ArrayDeque;
-import java.util.Deque;
+
+class Node {
+    char data;
+    Node next;
+    Node(char data) { this.data = data; }
+}
 
 public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("Enter a string: ");
         String input = scanner.nextLine();
 
-        Deque<Character> deque = new ArrayDeque<>();
-
-        for (int i = 0; i < input.length(); i++) {
-            deque.addLast(input.charAt(i));
+        Node head = null, tail = null;
+        for (char ch : input.toCharArray()) {
+            Node newNode = new Node(Character.toLowerCase(ch));
+            if (head == null) { head = newNode; tail = newNode; }
+            else { tail.next = newNode; tail = newNode; }
         }
 
+        Node slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        Node secondHalf = reverseList(slow);
+        Node firstHalf = head;
+
         boolean isPalindrome = true;
-
-        // Step 3: Remove from first and last and compare
-        // A palindrome must match from both ends until 0 or 1 character re
-        while (deque.size() > 1) {
-            char first = deque.removeFirst();
-            char last = deque.removeLast();
-
-            if (Character.toLowerCase(first) != Character.toLowerCase(last)) {
+        Node tempSecond = secondHalf;
+        while (tempSecond != null) {
+            if (firstHalf.data != tempSecond.data) {
                 isPalindrome = false;
                 break;
             }
+            firstHalf = firstHalf.next;
+            tempSecond = tempSecond.next;
         }
 
-        if (isPalindrome) {
-            System.out.println("Result: '" + input + "' is a palindrome.");
-        } else {
-            System.out.println("Result: '" + input + "' is not a palindrome.");
-        }
-
+        System.out.println("Result: '" + input + "' is " + (isPalindrome ? "" : "not ") + "a palindrome.");
         scanner.close();
+    }
+
+    private static Node reverseList(Node head) {
+        Node prev = null, current = head, next = null;
+        while (current != null) {
+            next = current.next;
+            current.next = prev;
+            prev = current;
+            current = next;
+        }
+        return prev;
     }
 }
