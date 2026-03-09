@@ -1,34 +1,43 @@
 import java.util.Scanner;
 
+class PalindromeService {
+    public boolean check(String input) {
+        if (input == null || input.isEmpty()) return false;
+
+        String cleaned = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+        int start = 0;
+        int end = cleaned.length() - 1;
+
+        while (start < end) {
+            if (cleaned.charAt(start) != cleaned.charAt(end)) {
+                return false;
+            }
+            start++;
+            end--;
+        }
+        return true;
+    }
+}
+
 public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter a string or phrase: ");
-        String original = scanner.nextLine();
+        PalindromeService service = new PalindromeService();
 
-        String cleaned = original.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        System.out.print("Enter text for OO Palindrome Check: ");
+        String userInput = scanner.nextLine();
 
-        boolean isPalindrome = true;
-        int left = 0;
-        int right = cleaned.length() - 1;
+        boolean result = service.check(userInput);
 
-        while (left < right) {
-            if (cleaned.charAt(left) != cleaned.charAt(right)) {
-                isPalindrome = false;
-                break;
-            }
-            left++;
-            right--;
-        }
-
-        System.out.println("Original: " + original);
-        System.out.println("Normalized: " + cleaned);
-        if (isPalindrome && !cleaned.isEmpty()) {
-            System.out.println("Result: It is a palindrome!");
+        System.out.println("-----------------------------------");
+        if (result) {
+            System.out.println("Result: Success! The input is a palindrome.");
         } else {
-            System.out.println("Result: It is NOT a palindrome.");
+            System.out.println("Result: Failure! The input is not a palindrome.");
         }
+        System.out.println("-----------------------------------");
 
         scanner.close();
     }
