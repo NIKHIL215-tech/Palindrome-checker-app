@@ -1,43 +1,69 @@
-import java.util.Scanner;
+import java.util.*;
 
-class PalindromeService {
-    public boolean check(String input) {
-        if (input == null || input.isEmpty()) return false;
+interface PalindromeStrategy {
+    boolean isPalindrome(String input);
+}
 
-        String cleaned = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+class StackStrategy implements PalindromeStrategy {
+    @Override
+    public boolean isPalindrome(String input) {
+        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        Stack<Character> stack = new Stack<>();
+        for (char ch : clean.toCharArray()) stack.push(ch);
 
-        int start = 0;
-        int end = cleaned.length() - 1;
+        StringBuilder reversed = new StringBuilder();
+        while (!stack.isEmpty()) reversed.append(stack.pop());
 
-        while (start < end) {
-            if (cleaned.charAt(start) != cleaned.charAt(end)) {
-                return false;
-            }
-            start++;
-            end--;
+        return clean.equals(reversed.toString());
+    }
+}
+
+class TwoPointerStrategy implements PalindromeStrategy {
+    @Override
+    public boolean isPalindrome(String input) {
+        String clean = input.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+        int left = 0, right = clean.length() - 1;
+        while (left < right) {
+            if (clean.charAt(left++) != clean.charAt(right--)) return false;
         }
         return true;
     }
 }
 
+class PalindromeContext {
+    private PalindromeStrategy strategy;
+
+    public void setStrategy(PalindromeStrategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public boolean executeCheck(String input) {
+        return strategy.isPalindrome(input);
+    }
+}
+
+// Main Application
 public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        PalindromeContext context = new PalindromeContext();
 
-        PalindromeService service = new PalindromeService();
+        System.out.print("Enter string: ");
+        String text = scanner.nextLine();
 
-        System.out.print("Enter text for OO Palindrome Check: ");
-        String userInput = scanner.nextLine();
+        System.out.println("Select Strategy: 1. Stack 2. Two-Pointer");
+        int choice = scanner.nextInt();
 
-        boolean result = service.check(userInput);
-
-        System.out.println("-----------------------------------");
-        if (result) {
-            System.out.println("Result: Success! The input is a palindrome.");
+        if (choice == 1) {
+            context.setStrategy(new StackStrategy());
+            System.out.println("Using Stack Strategy...");
         } else {
-            System.out.println("Result: Failure! The input is not a palindrome.");
+            context.setStrategy(new TwoPointerStrategy());
+            System.out.println("Using Two-Pointer Strategy...");
         }
-        System.out.println("-----------------------------------");
+
+        boolean result = context.executeCheck(text);
+        System.out.println("Is Palindrome: " + result);
 
         scanner.close();
     }
