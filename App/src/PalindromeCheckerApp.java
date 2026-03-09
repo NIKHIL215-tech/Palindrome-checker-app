@@ -4,29 +4,32 @@ public class PalindromeCheckerApp {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.print("Enter a string: ");
-        String input = scanner.nextLine();
+        System.out.print("Enter a string or phrase: ");
+        String original = scanner.nextLine();
 
-        boolean isPalindrome = checkRecursive(input, 0, input.length() - 1);
+        String cleaned = original.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 
-        if (isPalindrome) {
-            System.out.println("Result: '" + input + "' is a palindrome.");
+        boolean isPalindrome = true;
+        int left = 0;
+        int right = cleaned.length() - 1;
+
+        while (left < right) {
+            if (cleaned.charAt(left) != cleaned.charAt(right)) {
+                isPalindrome = false;
+                break;
+            }
+            left++;
+            right--;
+        }
+
+        System.out.println("Original: " + original);
+        System.out.println("Normalized: " + cleaned);
+        if (isPalindrome && !cleaned.isEmpty()) {
+            System.out.println("Result: It is a palindrome!");
         } else {
-            System.out.println("Result: '" + input + "' is not a palindrome.");
+            System.out.println("Result: It is NOT a palindrome.");
         }
 
         scanner.close();
-    }
-
-    public static boolean checkRecursive(String str, int start, int end) {
-        if (start >= end) {
-            return true;
-        }
-
-        if (Character.toLowerCase(str.charAt(start)) != Character.toLowerCase(str.charAt(end))) {
-            return false;
-        }
-
-        return checkRecursive(str, start + 1, end - 1);
     }
 }
